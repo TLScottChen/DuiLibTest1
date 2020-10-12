@@ -2,6 +2,8 @@
 #include <UIlib.h>
 using namespace DuiLib;
 
+#include "DuiMenu.h"
+
 #ifdef _DEBUG
 #   ifdef _UNICODE
 #       pragma comment(lib, "DuiLib_ud.lib")
@@ -83,6 +85,17 @@ public:
 				pControl->SelectItem(1);
 			else if (strName == _T("OptionDemo3"))
 				pControl->SelectItem(2);
+		}
+		else if (msg.sType == _T("click"))
+		{
+			if (msg.pSender->GetName() == _T("btnMenu"))
+			{
+				POINT pt = { msg.ptMouse.x, msg.ptMouse.y };
+				CMenuWnd *pMenu = new CMenuWnd(_T("Menu/menu.xml"));
+
+				pMenu->Init(*this, pt);
+				pMenu->ShowWindow(TRUE);
+			}
 		}
 
 		__super::Notify(msg);
