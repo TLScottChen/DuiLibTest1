@@ -97,7 +97,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	HRESULT Hr = ::CoInitialize(NULL);
 	if (FAILED(Hr)) return 0;
 
-	CDuiFrameWnd *pFrame = new CDuiFrameWnd;
+	CDuiFrameWnd *pFrame = new CDuiFrameWnd;    // 这里必须用new，否则有ActiveX控件时，关闭窗口会产生崩溃
 	pFrame->Create(NULL, _T("DUIWnd"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
 	pFrame->CenterWindow();
 	pFrame->ShowModal();
