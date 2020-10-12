@@ -16,60 +16,22 @@ using namespace DuiLib;
 #   endif
 #endif
 
-class CDuiFrameWnd : public CWindowWnd, public INotifyUI
+class CDuiFrameWnd : public WindowImplBase
 {
 public:
-	virtual LPCTSTR GetWindowClassName() const { return _T("DUIMainFrame"); }
-	virtual void    Notify(TNotifyUI& msg)
-	{
-		if (msg.sType == _T("click"))
-		{
-			if (msg.pSender->GetName() == _T("btnHello"))
-			{
-				::MessageBox(NULL, _T("我是按钮"), _T("点击了按钮"), NULL);
-			}
-		}
-	}
-
-	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		LRESULT lRes = 0;
-
-		if (uMsg == WM_CREATE)
-		{
-			m_PaintManager.Init(m_hWnd);
-
-			CDialogBuilder builder;
-			CControlUI* pRoot = builder.Create(_T("duilib.xml"), (UINT)0, NULL, &m_PaintManager);   // duilib.xml需要放到exe目录下
-			ASSERT(pRoot && "Failed to parse XML");
-
-			m_PaintManager.AttachDialog(pRoot);
-			m_PaintManager.AddNotifier(this);   // 添加控件等消息响应，这样消息就会传达到duilib的消息循环，我们可以在Notify函数里做消息处理
-			return lRes;
-		}
-
-		if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
-		{
-			return lRes;
-		}
-
-		return __super::HandleMessage(uMsg, wParam, lParam);
-	}
-
-protected:
-	CPaintManagerUI m_PaintManager;
+	virtual LPCTSTR    GetWindowClassName() const   { return _T("DUIMainFrame"); }
+	virtual CDuiString GetSkinFile()                { return _T("duilib.xml"); }
+	virtual CDuiString GetSkinFolder()              { return _T(""); }
 };
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-    CPaintManagerUI::SetInstance(hInstance);
-	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath());   // 设置资源的默认路径（此处设置为和exe在同一目录）
+	CPaintManagerUI::SetInstance(hInstance);
 
-    CDuiFrameWnd duiFrame;
-    duiFrame.Create(NULL, _T("DUIWnd"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
+	CDuiFrameWnd duiFrame;
+	duiFrame.Create(NULL, _T("DUIWnd"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
 	duiFrame.CenterWindow();
-    duiFrame.ShowModal();
-    return 0;
+	duiFrame.ShowModal();
+	return 0;
 }
-
 
